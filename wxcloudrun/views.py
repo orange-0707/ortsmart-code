@@ -4,7 +4,32 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
+import openai
+import json
+from flask import Flask, render_template, request, jsonify
+import openai
 
+openai.api_key = "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"
+
+init_messages = {"role": "system", "content": "你将作为一个能够提供帮助的助手."}
+msg = []
+
+def add_response(response_text):
+    txt = {"role": "assistant", "content": response_text}
+    msg.append(txt)
+
+
+def add_ask(ask):
+    txt = {"role": "user", "content": ask}
+    print(type(ask))
+    msg.append(txt)
+
+
+def ask_gpt():
+    print(msg)
+    response = openai.ChatCompletion.create(presence_penalty = 1,frequency_penalty = 1,temperature = 1.0,n = 1,model = "gpt-3.5-turbo",messages = msg)
+    print(response)
+    return response
 
 @app.route('/')
 def index():
@@ -13,6 +38,27 @@ def index():
     """
     return render_template('index.html')
 
+
+@app.route('/ac', methods=['POST'])
+def chat():
+    try:
+        msg.append(init_messages)
+        # request.get_json()
+        print(request.data)
+        data = json.loads(request.data)
+        message_page = data["message"]
+
+        add_ask(message_page.strip())
+        public_response = ask_gpt()
+        response_text = public_response.choices[0].message.content.strip()
+
+        createTs = public_response.created
+        add_response(response_text)
+
+        #print('本次消费的token总数量：' + str(public_response['usage'].total_tokens))
+        return jsonify({"data": response_text})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 @app.route('/api/count', methods=['POST'])
 def count():
