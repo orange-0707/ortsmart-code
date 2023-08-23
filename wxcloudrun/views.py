@@ -42,6 +42,7 @@ def index():
 @app.route('/ac', methods=['POST'])
 def chat():
     try:
+        print("test......")
         msg.append(init_messages)
         # request.get_json()
         print(request.data)
@@ -51,8 +52,8 @@ def chat():
         add_ask(message_page.strip())
         public_response = ask_gpt()
         response_text = public_response.choices[0].message.content.strip()
-
-        createTs = public_response.created
+        
+        #createTs = public_response.created
         add_response(response_text)
 
         #print('本次消费的token总数量：' + str(public_response['usage'].total_tokens))
