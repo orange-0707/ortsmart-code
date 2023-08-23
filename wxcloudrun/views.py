@@ -39,7 +39,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/ac', methods=['POST'])
+@app.route('/api/ac', methods=['POST'])
 def chat():
     try:
         print("test......")
@@ -59,6 +59,7 @@ def chat():
         #print('本次消费的token总数量：' + str(public_response['usage'].total_tokens))
         return jsonify({"data": response_text})
     except Exception as e:
+        print("123")
         return jsonify({"error": str(e)})
 
 @app.route('/api/count', methods=['POST'])
