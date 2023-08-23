@@ -45,9 +45,8 @@ def chat():
         print("test......")
         msg.append(init_messages)
         # request.get_json()
-        print(request.data)
-        data = json.loads(request.data)
-        message_page = data["message"]
+        params = request.get_json()
+        message_page = params["message"]
 
         add_ask(message_page.strip())
         public_response = ask_gpt()
